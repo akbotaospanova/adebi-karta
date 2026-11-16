@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Әдеби топонимдердің сандық карталары</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b0e22; --ink2:#12163a; --ink3:#1a1f4d; --line:rgba(227,182,92,.22);
+  --gold:#e3b65c; --gold2:#f5d58f; --parch:#f4e7c9; --parch2:#e9d6ab; --crim:#e0574b; --teal:#4fc1b2;
+  --txt:#e9e6f5; --mut:#a9a6c4;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--txt);font-family:Inter,system-ui,sans-serif;line-height:1.65;font-size:16px;overflow-x:hidden}
+h1,h2,h3,h4{font-family:Lora,Georgia,serif;margin:0;line-height:1.15}
+a{color:var(--gold2)}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#bg canvas{width:100%;height:100%;display:block}
+.vign{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 20%,transparent 0,rgba(11,14,34,.55) 60%,rgba(11,14,34,.92) 100%)}
+main,header,nav,footer{position:relative;z-index:1}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+/* NAV */
+nav.top{position:sticky;top:0;z-index:20;background:rgba(11,14,34,.78);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;gap:18px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Lora;font-weight:700;color:var(--gold2);text-decoration:none;white-space:nowrap;font-size:17px}
+.brand svg{width:28px;height:28px}
+.links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.links a{color:var(--mut);text-decoration:none;font-size:14px;font-weight:500;padding:7px 11px;border-radius:8px;white-space:nowrap}
+.links a:hover,.links a.on{color:var(--ink);background:var(--gold)}
+
+/* HERO */
+.hero{min-height:calc(100vh - 62px);display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding:50px 0 70px}
+.eyebrow{display:inline-flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold2);border:1px solid var(--line);padding:6px 12px;border-radius:999px;background:rgba(227,182,92,.06)}
+.hero h1{font-size:clamp(40px,6.2vw,78px);font-weight:700;margin:22px 0 18px;letter-spacing:-.5px}
+.hero h1 .g{background:linear-gradient(100deg,var(--gold2),var(--gold) 40%,#c98a3a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:18.5px;color:var(--mut);max-width:620px;margin:0}
+.works3{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 30px}
+.wchip{display:flex;align-items:center;gap:9px;padding:9px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:14.5px}
+.wchip i{width:10px;height:10px;border-radius:50%;display:block}
+.wchip b{font-family:Lora;font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;font:600 15px Inter;padding:14px 22px;border-radius:12px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn.pri{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1430;box-shadow:0 10px 30px -10px rgba(227,182,92,.7)}
+.btn.sec{background:transparent;color:var(--txt);border:1px solid rgba(255,255,255,.18)}
+.btn:hover{transform:translateY(-2px)}
+.stats{display:flex;gap:34px;margin-top:40px;flex-wrap:wrap}
+.stat b{display:block;font-family:Lora;font-size:44px;color:var(--gold2);line-height:1}
+.stat span{font-size:13.5px;color:var(--mut)}
+.heroart{position:relative;aspect-ratio:1/1;max-width:520px;width:100%;margin-left:auto}
+.compass{position:absolute;inset:0;animation:spin 120s linear infinite;opacity:.9}
+@keyframes spin{to{transform:rotate(360deg)}}
+.card3{position:absolute;width:46%;aspect-ratio:1;border-radius:18px;overflow:hidden;border:2px solid rgba(227,182,92,.5);box-shadow:0 30px 60px -20px rgba(0,0,0,.8);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.card3 img{width:100%;height:100%;object-fit:cover;display:block}
+.card3 span{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));font:600 14px Lora;color:#fff}
+.c1{left:4%;top:8%;transform:rotate(-8deg)}.c2{right:2%;top:22%;transform:rotate(6deg);z-index:2}.c3{left:22%;bottom:2%;transform:rotate(-2deg);z-index:3}
+.heroart:hover .c1{transform:rotate(-12deg) translate(-12px,-10px)}.heroart:hover .c2{transform:rotate(10deg) translate(12px,-6px)}.heroart:hover .c3{transform:rotate(0) translateY(10px)}
+
+/* SECTIONS */
+section{padding:90px 0 30px}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:34px;flex-wrap:wrap}
+.num{font:600 13px Inter;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.num::before{content:"";width:34px;height:1px;background:var(--gold)}
+h2{font-size:clamp(30px,4.4vw,50px);font-weight:700}
+.sub{color:var(--mut);max-width:640px;margin:10px 0 0;font-size:17px}
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:28px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.parch{background:linear-gradient(160deg,var(--parch),var(--parch2));color:#2b2117;border-radius:20px;padding:30px;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.parch h3{color:#3a2412}
+.parch::after{content:"";position:absolute;inset:8px;border:1px solid rgba(90,60,20,.25);border-radius:14px;pointer-events:none}
+
+/* ANNOT */
+.tabs{display:inline-flex;background:rgba(255,255,255,.06);border-radius:12px;padding:4px;gap:4px}
+.tabs button{border:0;background:transparent;color:var(--mut);font:600 14px Inter;padding:9px 16px;border-radius:9px;cursor:pointer}
+.tabs button.on{background:var(--gold);color:#1a1430}
+.annot{font-size:17.5px}
+.annot p{margin:0 0 14px}
+.annot b{color:#6b3b12}
+.lang{display:none}.lang.on{display:block;animation:fade .4s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ABOUT */
+.ic{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(227,182,92,.12);border:1px solid var(--line);margin-bottom:16px}
+.ic svg{width:26px;height:26px;stroke:var(--gold2);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.glass h3{font-size:22px;margin-bottom:8px;color:#fff}
+.glass p{margin:0;color:var(--mut)}
+.tasks{counter-reset:t;list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.tasks li{counter-increment:t;display:flex;gap:16px;align-items:flex-start;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.tasks li::before{content:"0" counter(t);font:700 24px Lora;color:var(--gold);min-width:38px}
+.formula{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:30px;margin-top:20px;border-radius:20px;border:1px dashed var(--line);text-align:center}
+.formula .f{font:700 clamp(22px,3.2vw,34px) Lora}
+.formula .op{font:400 30px Lora;color:var(--gold)}
+.formula .f.lit{color:var(--gold2)}.formula .f.it{color:var(--teal)}.formula .f.geo{color:var(--crim)}
+
+/* TIMELINE */
+.tline{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative;margin-top:26px}
+.tline::before{content:"";position:absolute;left:4%;right:4%;top:27px;height:2px;background:linear-gradient(90deg,var(--gold),var(--teal),var(--crim))}
+.st{position:relative;padding-top:66px}
+.st .dotn{position:absolute;top:0;left:0;width:56px;height:56px;border-radius:50%;background:var(--ink2);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font:700 20px Lora;color:var(--gold2)}
+.st h4{font-size:19px;color:#fff;margin-bottom:6px}
+.st p{margin:0;color:var(--mut);font-size:15px}
+
+/* MAP */
+.mapbox{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+.mapwrap{position:relative;border-radius:22px;overflow:hidden;background:radial-gradient(ellipse at 40% 40%,#1b2156,#0e1230);border:1px solid var(--line);min-height:420px}
+#lmap{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#lmap .grat{stroke:rgba(255,255,255,.06);stroke-width:1}
+#lmap .gratl{fill:rgba(255,255,255,.25);font:10px Inter}
+#lmap .land{fill:rgba(244,231,201,.07);stroke:var(--gold);stroke-width:1.4;stroke-linejoin:round}
+#lmap .water{fill:url(#hatch);stroke:rgba(79,193,178,.55);stroke-width:1}
+#lmap .river{fill:none;stroke:rgba(110,190,230,.45);stroke-width:1.3;stroke-linecap:round}
+#lmap .route{fill:none;stroke-width:2.2;stroke-dasharray:7 6;opacity:.75;animation:dash 30s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-400}}
+#lmap .pt{cursor:pointer;transition:opacity .3s}
+#lmap .pt .halo{animation:pulse 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+#lmap.far .lbl.minor{display:none}
+@keyframes pulse{50%{opacity:.04;transform:scale(1.7)}}
+#lmap .lbl{fill:#fff;font-family:Inter;font-weight:600;paint-order:stroke;stroke:#0b0e22;stroke-width:3px;pointer-events:none}
+#lmap .pt.dim,#lmap .route.dim{opacity:.12}
+#lmap .pt.sel .dot{stroke:#fff}
+#lmap .pt.sel .halo{opacity:.55;animation:none}
+.mapctl{position:absolute;left:14px;top:14px;display:flex;gap:6px;flex-wrap:wrap;right:14px}
+.fbtn{border:1px solid rgba(255,255,255,.14);background:rgba(11,14,34,.75);backdrop-filter:blur(6px);color:var(--txt);font:600 13px Inter;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.fbtn i{width:9px;height:9px;border-radius:50%}
+.fbtn.on{background:var(--gold);color:#1a1430;border-color:var(--gold)}
+.zoomc{position:absolute;right:14px;bottom:14px;display:flex;flex-direction:column;gap:6px}
+.zoomc button{width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(11,14,34,.8);color:#fff;font-size:18px;cursor:pointer}
+.maplegend{position:absolute;left:14px;bottom:14px;font-size:12px;color:var(--mut);background:rgba(11,14,34,.7);padding:8px 12px;border-radius:10px;line-height:1.5}
+.info{border-radius:22px;overflow:auto;background:linear-gradient(170deg,var(--parch),var(--parch2));color:#2b2117;display:flex;flex-direction:column;min-height:420px}
+.info .ph{height:190px;flex-shrink:0;cursor:zoom-in;background:#2b2117 center/cover;position:relative}
+.info .ph .wt{position:absolute;left:14px;bottom:12px;font:600 12.5px Inter;color:#fff;padding:5px 10px;border-radius:8px}
+.info .bd{padding:22px 24px 24px;flex:1}
+.info h3{font-size:28px;color:#3a2412;margin-bottom:6px}
+.badge{display:inline-block;font:600 12px Inter;padding:4px 9px;border-radius:7px;background:rgba(58,36,18,.1);color:#6b3b12;margin:0 6px 6px 0}
+.info h5{font:700 12px Inter;letter-spacing:.12em;text-transform:uppercase;color:#8a5a22;margin:14px 0 4px}
+.info p{margin:0;font-size:15px}
+.info .qt{font-family:Lora;font-style:italic;margin-top:14px;padding-left:12px;border-left:3px solid #c98a3a;color:#4b2e14}
+.info .ap{font-size:12.5px;color:#8a5a22;margin-top:12px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;flex:1;color:#6b4a2a}
+.empty svg{width:70px;height:70px;margin-bottom:12px;opacity:.7}
+
+/* WORKS */
+.wtabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.wt{flex:1;min-width:220px;text-align:left;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);border-radius:16px;padding:16px 18px;color:var(--txt);font-family:Inter;transition:.25s;position:relative;overflow:hidden}
+.wt::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--c);transition:width .4s}
+.wt.on{background:rgba(255,255,255,.07);border-color:var(--c)}.wt.on::after{width:100%}
+.wt small{display:block;color:var(--mut);font-size:13px}
+.wt b{font:700 21px Lora;color:#fff}
+.wpanel{display:none}.wpanel.on{display:grid;animation:fade .45s}
+.wpanel{grid-template-columns:1fr 1fr;gap:22px}
+.wmeta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.wmeta div{background:rgba(255,255,255,.04);border-radius:12px;padding:12px 14px;font-size:14px}
+.wmeta div span{display:block;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.tlist{display:grid;gap:10px}
+.titem{display:flex;gap:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:.2s}
+.titem:hover{border-color:var(--c);transform:translateX(4px)}
+.titem .tn{font:700 18px Lora;color:#fff;min-width:110px}
+.titem p{margin:0;font-size:14px;color:var(--mut)}
+.gal{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-content:start}
+.gal figure{margin:0;border-radius:14px;overflow:hidden;position:relative;cursor:zoom-in;aspect-ratio:1;border:1px solid rgba(255,255,255,.1)}
+.gal figure img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.gal figure:hover img{transform:scale(1.07)}
+.gal figure figcaption{position:absolute;left:0;right:0;bottom:0;padding:24px 10px 8px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:12.5px;color:#fff}
+.gal figure.big{grid-column:span 2;aspect-ratio:2/1.2}
+
+/* GIS layers */
+.layers{position:relative;height:340px;perspective:1100px;margin:10px auto 0;max-width:460px}
+.lyr{position:absolute;left:8%;right:8%;height:150px;border-radius:16px;transform:rotateX(58deg) rotateZ(-32deg);transition:transform .5s,top .5s;display:flex;align-items:center;justify-content:center;font:700 17px Lora;color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:0 20px 40px -10px rgba(0,0,0,.6)}
+.lyr span{transform:rotateZ(0)}
+.lyr.l1{top:150px;background:linear-gradient(135deg,rgba(201,138,58,.9),rgba(120,70,20,.9))}
+.lyr.l2{top:85px;background:linear-gradient(135deg,rgba(79,193,178,.85),rgba(20,90,90,.85))}
+.lyr.l3{top:20px;background:linear-gradient(135deg,rgba(224,87,75,.88),rgba(110,25,40,.88))}
+.layers:hover .l1{top:200px}.layers:hover .l3{top:-15px}
+.steps{list-style:none;padding:0;margin:16px 0 0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 12px 40px;color:var(--mut);font-size:15px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold2);font:700 13px Inter;display:flex;align-items:center;justify-content:center}
+.steps b{color:#fff}
+
+/* charts/tables */
+.chart{width:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:10px}
+.legend span{display:flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:block}
+.cap{font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.05em;margin-bottom:12px;text-transform:uppercase}
+table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:15px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+table.t th{background:rgba(227,182,92,.14);color:var(--gold2);text-align:left;padding:14px 16px;font-family:Lora;font-size:16px}
+table.t td{padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);vertical-align:top}
+table.t tr:hover td{background:rgba(255,255,255,.03)}
+.scroll{overflow-x:auto}
+.ety{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ety .e{padding:22px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.ety .e h4{font-size:20px;color:#fff;margin-bottom:4px}
+.ety .e .ex{font:600 15px Lora;color:var(--gold2);margin-bottom:8px}
+.ety .e p{margin:0;color:var(--mut);font-size:14.5px}
+
+/* results */
+.gain{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gain div{padding:22px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:15px;color:var(--mut)}
+.gain div b{display:block;color:#fff;font-family:Lora;font-size:18px;margin-bottom:6px}
+.recs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.rec{padding:24px;border-radius:18px;background:linear-gradient(170deg,rgba(227,182,92,.12),rgba(227,182,92,.02));border:1px solid var(--line)}
+.rec .n{font:700 34px Lora;color:var(--gold)}
+.rec h4{color:#fff;font-size:18px;margin:6px 0}
+.rec p{margin:0;font-size:14.5px;color:var(--mut)}
+
+/* quiz */
+.quiz{max-width:760px;margin:0 auto;text-align:center}
+.qcard{padding:36px}
+.qprog{height:6px;background:rgba(255,255,255,.08);border-radius:9px;overflow:hidden;margin-bottom:24px}
+.qprog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--crim));width:0;transition:width .4s}
+.qq{font:700 clamp(24px,3.4vw,34px) Lora;margin:6px 0 24px;color:#fff}
+.qopts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.qo{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:#fff;border-radius:14px;padding:18px 12px;font:600 16px Lora;cursor:pointer;transition:.2s}
+.qo:hover{border-color:var(--gold)}
+.qo.ok{background:rgba(79,193,178,.25);border-color:var(--teal)}
+.qo.no{background:rgba(224,87,75,.25);border-color:var(--crim)}
+.qfb{min-height:52px;margin-top:18px;color:var(--mut);font-size:15px}
+
+details.refs{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px 22px;background:rgba(255,255,255,.03)}
+details.refs summary{cursor:pointer;font:600 18px Lora;color:#fff}
+details.refs ol{color:var(--mut);font-size:14.5px;margin:14px 0 0;padding-left:22px}
+details.refs li{margin-bottom:6px}
+
+footer{padding:60px 0 40px;text-align:center;color:var(--mut);font-size:14px}
+footer .orn{width:200px;margin:0 auto 18px;display:block;opacity:.7}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(5,6,16,.92);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+.lb.on{display:flex;animation:fade .3s}
+.lb img{max-width:100%;max-height:88vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.8)}
+.lb p{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#fff;font-family:Lora}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s,transform .8s}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:34px}
+  .heroart{max-width:420px;margin:10px auto 0}
+  .mapbox{grid-template-columns:1fr}
+  .wpanel{grid-template-columns:1fr}
+  .g3,.g4,.recs,.ety,.gain{grid-template-columns:1fr 1fr}
+  .tline{grid-template-columns:1fr 1fr;row-gap:30px}.tline::before{display:none}
+}
+@media (max-width:620px){
+  .g2,.g3,.g4,.recs,.ety,.gain{grid-template-columns:1fr}
+  .tline{grid-template-columns:1fr}
+  .qopts{grid-template-columns:1fr}
+  .maplegend{display:none}
+  .brand span{display:none}
+  section{padding:64px 0 20px}
+  .stats{gap:22px}.stat b{font-size:36px}
+  .wmeta{grid-template-columns:1fr}
+  .glass,.parch{padding:22px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="bg"><canvas id="cv"></canvas></div><div class="vign"></div>
+
+<nav class="top"><div class="wrap">
+  <a class="brand" href="#home"><svg viewBox="0 0 32 32" fill="none" stroke="#e3b65c" stroke-width="1.6"><circle cx="16" cy="16" r="13"/><path d="M16 3v26M3 16h26" opacity=".35"/><path d="M16 5l3.5 11L16 27l-3.5-11z" fill="#e3b65c" fill-opacity=".35"/></svg><span>Әдеби карта</span></a>
+  <div class="links" id="links">
+    <a href="#annot">Аннотация</a><a href="#about">Жоба</a><a href="#methods">Әдістер</a><a href="#map">Карта</a><a href="#works">Шығармалар</a><a href="#gis">ГАЖ</a><a href="#analysis">Талдау</a><a href="#results">Қорытынды</a><a href="#quiz">Ойын</a>
+  </div>
+</div></nav>
+
+<header id="home"><div class="wrap hero">
+  <div>
+    <div class="eyebrow"><span class="pill">Ғылыми жоба</span><span class="pill">Digital Humanities</span><span class="pill">Әдебиет · IT · География</span></div>
+    <h1>Әдеби топонимдердің <span class="g">сандық карталары</span></h1>
+    <p class="lead">М. Жұмабаевтың «Батыр Баян», М. Шахановтың «Нарынқұм зауалы», М. Әуезовтің «Көксерек» шығармаларындағы жер-су атауларын ГАЖ технологиялары арқылы цифрлық картаға түсіру.</p>
+    <div class="works3">
+      <div class="wchip"><i style="background:#e3b65c"></i><b>«Батыр Баян»</b></div>
+      <div class="wchip"><i style="background:#e0574b"></i><b>«Нарынқұм зауалы»</b></div>
+      <div class="wchip"><i style="background:#4fc1b2"></i><b>«Көксерек»</b></div>
+    </div>
+    <div class="cta"><a class="btn pri" href="#map">Интерактивті картаны ашу →</a><a class="btn sec" href="#annot">Аннотациямен танысу</a></div>
+    <div class="stats">
+      <div class="stat"><b data-count="3">0</b><span>классикалық шығарма</span></div>
+      <div class="stat"><b data-count="24" data-suf="">0</b><span>картаға түскен топоним</span></div>
+      <div class="stat"><b data-count="3">0</b><span>карта қабаты</span></div>
+      <div class="stat"><b data-count="16">0</b><span>авторлық инфографика</span></div>
+    </div>
+  </div>
+  <div class="heroart">
+    <svg class="compass" viewBox="0 0 400 400" fill="none">
+      <circle cx="200" cy="200" r="196" stroke="rgba(227,182,92,.35)"/>
+      <circle cx="200" cy="200" r="170" stroke="rgba(227,182,92,.2)" stroke-dasharray="2 6"/>
+      <circle cx="200" cy="200" r="120" stroke="rgba(227,182,92,.15)"/>
+      <g stroke="rgba(227,182,92,.4)"><line x1="380.0" y1="200.0" x2="396.0" y2="200.0"/><line x1="379.3" y1="215.7" x2="387.3" y2="216.4"/><line x1="377.3" y1="231.3" x2="385.1" y2="232.6"/><line x1="373.9" y1="246.6" x2="389.3" y2="250.7"/><line x1="369.1" y1="261.6" x2="376.7" y2="264.3"/><line x1="363.1" y1="276.1" x2="370.4" y2="279.5"/><line x1="355.9" y1="290.0" x2="369.7" y2="298.0"/><line x1="347.4" y1="303.2" x2="354.0" y2="307.8"/><line x1="337.9" y1="315.7" x2="344.0" y2="320.8"/><line x1="327.3" y1="327.3" x2="338.6" y2="338.6"/><line x1="315.7" y1="337.9" x2="320.8" y2="344.0"/><line x1="303.2" y1="347.4" x2="307.8" y2="354.0"/><line x1="290.0" y1="355.9" x2="298.0" y2="369.7"/><line x1="276.1" y1="363.1" x2="279.5" y2="370.4"/><line x1="261.6" y1="369.1" x2="264.3" y2="376.7"/><line x1="246.6" y1="373.9" x2="250.7" y2="389.3"/><line x1="231.3" y1="377.3" x2="232.6" y2="385.1"/><line x1="215.7" y1="379.3" x2="216.4" y2="387.3"/><line x1="200.0" y1="380.0" x2="200.0" y2="396.0"/><line x1="184.3" y1="379.3" x2="183.6" y2="387.3"/><line x1="168.7" y1="377.3" x2="167.4" y2="385.1"/><line x1="153.4" y1="373.9" x2="149.3" y2="389.3"/><line x1="138.4" y1="369.1" x2="135.7" y2="376.7"/><line x1="123.9" y1="363.1" x2="120.5" y2="370.4"/><line x1="110.0" y1="355.9" x2="102.0" y2="369.7"/><line x1="96.8" y1="347.4" x2="92.2" y2="354.0"/><line x1="84.3" y1="337.9" x2="79.2" y2="344.0"/><line x1="72.7" y1="327.3" x2="61.4" y2="338.6"/><line x1="62.1" y1="315.7" x2="56.0" y2="320.8"/><line x1="52.6" y1="303.2" x2="46.0" y2="307.8"/><line x1="44.1" y1="290.0" x2="30.3" y2="298.0"/><line x1="36.9" y1="276.1" x2="29.6" y2="279.5"/><line x1="30.9" y1="261.6" x2="23.3" y2="264.3"/><line x1="26.1" y1="246.6" x2="10.7" y2="250.7"/><line x1="22.7" y1="231.3" x2="14.9" y2="232.6"/><line x1="20.7" y1="215.7" x2="12.7" y2="216.4"/><line x1="20.0" y1="200.0" x2="4.0" y2="200.0"/><line x1="20.7" y1="184.3" x2="12.7" y2="183.6"/><line x1="22.7" y1="168.7" x2="14.9" y2="167.4"/><line x1="26.1" y1="153.4" x2="10.7" y2="149.3"/><line x1="30.9" y1="138.4" x2="23.3" y2="135.7"/><line x1="36.9" y1="123.9" x2="29.6" y2="120.5"/><line x1="44.1" y1="110.0" x2="30.3" y2="102.0"/><line x1="52.6" y1="96.8" x2="46.0" y2="92.2"/><line x1="62.1" y1="84.3" x2="56.0" y2="79.2"/><line x1="72.7" y1="72.7" x2="61.4" y2="61.4"/><line x1="84.3" y1="62.1" x2="79.2" y2="56.0"/><line x1="96.8" y1="52.6" x2="92.2" y2="46.0"/><line x1="110.0" y1="44.1" x2="102.0" y2="30.3"/><line x1="123.9" y1="36.9" x2="120.5" y2="29.6"/><line x1="138.4" y1="30.9" x2="135.7" y2="23.3"/><line x1="153.4" y1="26.1" x2="149.3" y2="10.7"/><line x1="168.7" y1="22.7" x2="167.4" y2="14.9"/><line x1="184.3" y1="20.7" x2="183.6" y2="12.7"/><line x1="200.0" y1="20.0" x2="200.0" y2="4.0"/><line x1="215.7" y1="20.7" x2="216.4" y2="12.7"/><line x1="231.3" y1="22.7" x2="232.6" y2="14.9"/><line x1="246.6" y1="26.1" x2="250.7" y2="10.7"/><line x1="261.6" y1="30.9" x2="264.3" y2="23.3"/><line x1="276.1" y1="36.9" x2="279.5" y2="29.6"/><line x1="290.0" y1="44.1" x2="298.0" y2="30.3"/><line x1="303.2" y1="52.6" x2="307.8" y2="46.0"/><line x1="315.7" y1="62.1" x2="320.8" y2="56.0"/><line x1="327.3" y1="72.7" x2="338.6" y2="61.4"/><line x1="337.9" y1="84.3" x2="344.0" y2="79.2"/><line x1="347.4" y1="96.8" x2="354.0" y2="92.2"/><line x1="355.9" y1="110.0" x2="369.7" y2="102.0"/><line x1="363.1" y1="123.9" x2="370.4" y2="120.5"/><line x1="369.1" y1="138.4" x2="376.7" y2="135.7"/><line x1="373.9" y1="153.4" x2="389.3" y2="149.3"/><line x1="377.3" y1="168.7" x2="385.1" y2="167.4"/><line x1="379.3" y1="184.3" x2="387.3" y2="183.6"/></g>
+      <path d="M200 20 L214 186 L200 200 L186 186Z" fill="rgba(227,182,92,.5)"/><path d="M200 380 L214 214 L200 200 L186 214Z" fill="rgba(227,182,92,.2)"/>
+      <path d="M20 200 L186 186 L200 200 L186 214Z" fill="rgba(227,182,92,.2)"/><path d="M380 200 L214 186 L200 200 L214 214Z" fill="rgba(227,182,92,.2)"/>
+      <text x="200" y="14" fill="#e3b65c" font-family="Lora" font-size="16" text-anchor="middle" font-weight="700">С</text>
+    </svg>
+    <div class="card3 c1"><img src="img/m5.jpg" alt=""><span>«Батыр Баян»</span></div>
+    <div class="card3 c2"><img src="img/m15.jpg" alt=""><span>«Нарынқұм зауалы»</span></div>
+    <div class="card3 c3"><img src="img/m4.jpg" alt=""><span>«Көксерек»</span></div>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<!-- ANNOTATION -->
+<section id="annot" class="reveal">
+  <div class="sh"><div><div class="num">01 · Аннотация</div><h2>Зерттеу туралы қысқаша</h2></div>
+    <div class="tabs" id="langtabs"><button class="on" data-l="kk">Қазақша</button><button data-l="en">English</button></div></div>
+  <div class="parch annot">
+    <div class="lang on" data-l="kk">
+      <p><b>Зерттеудің мақсаты:</b> қазақ әдебиетінің классикалық туындыларындағы жер-су аттарын жинақтап, олардың этимологиясын ашу және заманауи ГАЖ (GIS) технологиялары негізінде интерактивті сандық картасын жасау.</p>
+      <p><b>Зерттеу кезеңдері:</b> 1) әдеби мәтіндерге топонимикалық талдау жасау; 2) анықталған географиялық нүктелердің тарихи-лингвистикалық мағынасын ашу; 3) геоақпараттық жүйелер арқылы нысандардың координаттарын белгілеп, визуалды карта қабаттарын құрастыру.</p>
+      <p><b>Жаңашылдығы:</b> әдебиет, тарих және IT салаларын ұштастыра отырып, көркем шығармадағы кеңістіктің сандық моделі жасалды. Бұл әдіс топонимдерді тек сөздік қор ретінде емес, нақты визуалды нысан ретінде тануға мүмкіндік береді.</p>
+      <p style="margin:0"><b>Нәтиже:</b> «Әдеби карта» платформасының негізі қаланды. Өнім әдебиет және география сабақтарында көрнекі құрал ретінде қолдануға тиімді; жас ұрпақтың отансүйгіштік сезімін оятып, ұлттық кодты цифрлық кеңістікте сақтауға қызмет етеді.</p>
+    </div>
+    <div class="lang" data-l="en">
+      <p><b>Purpose:</b> to collect geographic names (toponyms) found in classical works of Kazakh literature — “Batyr Bayan”, “The Tragedy of Narynqum” and “Kokserek” — reveal their etymology, and create an interactive digital map based on modern GIS technologies.</p>
+      <p><b>Stages:</b> 1) toponymic analysis of literary texts; 2) identifying the historical and linguistic meaning of the geographic points; 3) marking coordinates through GIS and constructing visual map layers.</p>
+      <p><b>Novelty:</b> a digital model of literary space was created by combining Literature, History and IT. Toponyms are recognised not only as vocabulary but as specific visual objects.</p>
+      <p style="margin:0"><b>Results:</b> the foundation of the “Literary Map” platform was established — a visual aid for literature and geography lessons that helps preserve the national code in the digital space.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="reveal">
+  <div class="sh"><div><div class="num">02 · Жоба</div><h2>Өзектілік, мақсат, міндеттер</h2></div></div>
+  <div class="grid g3">
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5-6.5-4.5L5.5 21l2-7.5L2 9h7z"/></svg></div><h3>Өзектілігі</h3><p>Жаһандану заманында ұлттық кодты сақтаудың бір жолы — топонимдерді жаңғырту. Классикадағы жер атаулары — тарих, шежіре және халықтың рухани географиясы. Оларды ГАЖ форматына көшіру қажеттілігі туындап отыр.</p></div>
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></div><h3>Мақсаты</h3><p>Қазақ әдеби шығармаларындағы топонимдерді жинақтап, Google Earth, ArcGIS немесе QGIS көмегімен цифрлық картаға түсіру және сипаттама беру.</p></div>
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Пәнаралық интеграция</h3><p>Оқушы әдебиетті оқып қана қоймай, тарихты, географияны және информатиканы қатар меңгереді — «жүйелі ойлау» қабілеті қалыптасады.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="glass"><h3 style="margin-bottom:16px">Міндеттері</h3>
+      <ul class="tasks">
+        <li>Таңдалған шығармалардан жер-су аттарын теріп жазу.</li>
+        <li>Атаулардың этимологиясын (шығу төркінін) және мағынасын анықтау.</li>
+        <li>Географиялық нүктелердің координаттарын табу.</li>
+        <li>ГАЖ бағдарламаларымен интерактивті карта қабатын жасау.</li>
+        <li>Мәліметтерді мектеп оқушыларына көмекші құрал ретінде ұсыну.</li>
+      </ul></div>
+    <div class="glass"><h3 style="margin-bottom:10px">Жаңашылдығы</h3>
+      <p>Бұрын топонимдер тек лингвистикалық тұрғыдан зерттелсе, бұл жұмыста олар алғаш рет нақты карта бетінде визуалды түрде бейнеленеді. Оқушы тек кітап оқып қана қоймай, сол оқиға өткен жерді виртуалды түрде көре алады.</p>
+      <div class="formula"><span class="f lit">Әдебиет</span><span class="op">+</span><span class="f it">IT</span><span class="op">+</span><span class="f geo">География</span></div>
+      <p style="margin-top:16px"><b style="color:#fff">Зерттеу нысаны:</b> «Батыр Баян» поэмасы, «Нарынқұм зауалы» жыры, «Көксерек» әңгімесі және ондағы географиялық атаулар.</p>
+    </div>
+  </div>
+</section>
+
+<!-- METHODS -->
+<section id="methods" class="reveal">
+  <div class="sh"><div><div class="num">03 · Әдістер</div><h2>Зерттеу әдістері мен кезеңдері</h2></div></div>
+  <div class="grid g4">
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 10h8M8 14h8M8 18h5"/></svg></div><h3>Мәтіндік талдау</h3><p>Шығармадан топонимдерді бөліп алу.</p></div>
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></div><h3>Картографиялық</h3><p>Жер бедерін карта бетінде белгілеу.</p></div>
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M3 8h8M13 16h8"/></svg></div><h3>Салыстырмалы</h3><p>Көне атаулар мен қазіргі ресми атауларды салыстыру.</p></div>
+    <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><h3>Цифрлық модельдеу</h3><p>ГАЖ құралдарымен жұмыс істеу.</p></div>
+  </div>
+  <div class="tline">
+    <div class="st"><div class="dotn">I</div><h4>Дайындық</h4><p>Әдебиеттерді іріктеу, дереккөздерді іздестіру.</p></div>
+    <div class="st"><div class="dotn">II</div><h4>Теориялық</h4><p>Топонимика және ГАЖ негіздерін оқып үйрену.</p></div>
+    <div class="st"><div class="dotn">III</div><h4>Практикалық</h4><p>Атауларды жинау, координаттарын анықтау, картаға нүктелерді қою.</p></div>
+    <div class="st"><div class="dotn">IV</div><h4>Қорытынды</h4><p>Карта интерфейсін безендіру, нәтижелерді талдау, есеп жазу.</p></div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section id="map" class="reveal">
+  <div class="sh"><div><div class="num">04 · Интерактивті карта</div><h2>Әдеби кеңістіктің сандық моделі</h2><p class="sub">Нүктені басыңыз — топонимнің этимологиясы, шығармадағы рөлі және авторлық инфографика ашылады. Шығарманы таңдасаңыз, карта сол өңірге жақындайды.</p></div></div>
+  <div class="mapbox">
+    <div class="mapwrap">
+      <svg id="lmap" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="mapctl" id="filters">
+        <button class="fbtn on" data-w="all">Барлығы</button>
+        <button class="fbtn" data-w="bb"><i style="background:#e3b65c"></i>Батыр Баян</button>
+        <button class="fbtn" data-w="nq"><i style="background:#e0574b"></i>Нарынқұм</button>
+        <button class="fbtn" data-w="ks"><i style="background:#4fc1b2"></i>Көксерек</button>
+      </div>
+      <div class="zoomc"><button id="zin" aria-label="Жақындату">+</button><button id="zout" aria-label="Алыстату">−</button><button id="zre" aria-label="Бастапқы" style="font-size:14px">⟲</button></div>
+      <div class="maplegend">● нақты орын &nbsp; ◌ шартты орын &nbsp; ┅ сюжет жолы</div>
+    </div>
+    <div class="info" id="info">
+      <div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="#8a5a22" stroke-width="1.3"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        <h3 style="font-size:22px">Топонимді таңдаңыз</h3><p style="font-size:14.5px;margin-top:6px">Картадағы кез келген нүктені басыңыз</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS -->
+<section id="works" class="reveal">
+  <div class="sh"><div><div class="num">05 · Шығармалар</div><h2>Үш шығарма — үш кеңістік</h2></div></div>
+  <div class="wtabs" id="wtabs"></div>
+  <div id="wpanels"></div>
+</section>
+
+<!-- GIS -->
+<section id="gis" class="reveal">
+  <div class="sh"><div><div class="num">06 · ГАЖ технологиялары</div><h2>Google Earth және ArcGIS</h2><p class="sub">ГАЖ — кеңістіктік мәліметтерді жинауға, сақтауға, талдауға және графиктік түрде көрсетуге арналған компьютерлік жүйе.</p></div></div>
+  <div class="grid g2" style="align-items:center">
+    <div>
+      <div class="glass" style="margin-bottom:18px"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></div><h3>Google Earth Pro</h3><p>3D форматта жер бедерін көру. Нарын құмдарын, Қараой жазығын 3D режимде көрсету. Әр нүктеге өлең үзінділерін, жырдың аудио нұсқасын немесе тарихи суреттерді (placemark) кірістіру.</p></div>
+      <div class="glass" style="margin-bottom:18px"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></div><h3>ArcGIS — кәсіби талдау</h3><p>ArcGIS — тек карта емес, деректер базасы. Мұнда тереңірек лингво-географиялық талдау жасауға болады.</p></div>
+      <div class="glass"><div class="ic"><svg viewBox="0 0 24 24"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg></div><h3>StoryMaps</h3><p>Мәтін мен картаны біріктіріп, интерактивті оқулық (Digital Storytelling) жасау. Оқырман жырды оқи отырып, картаның жылжығанын бақылайды.</p></div>
+    </div>
+    <div class="glass">
+      <div class="cap">ArcGIS жобасының қабаттары (Layers)</div>
+      <div class="layers"><div class="lyr l1"><span>1 · Тарихи қабат</span></div><div class="lyr l2"><span>2 · Топонимдер қабаты</span></div><div class="lyr l3"><span>3 · Оқиғалар қабаты</span></div></div>
+      <ol class="steps">
+        <li><b>Тарихи қабат:</b> XIX ғасырдағы Бөкей Ордасының картасын (Нарынқұм үшін) қою.</li>
+        <li><b>Топонимдер қабаты:</b> жырда кездесетін барлық жер-су аттарын нүктелік нысан (Point) ретінде енгізу.</li>
+        <li><b>Оқиғалар қабаты:</b> шайқас өткен жерлер, керуен тоқтаған бекеттер.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="glass"><h3 style="font-size:19px">Визуалдау</h3><p>Кейіпкердің жүріп өткен жолын карта бетінде сызықтармен, нүктелермен көрсету.</p></div>
+    <div class="glass"><h3 style="font-size:19px">Деректер қоры</h3><p>Әр нүктенің ішіне этимологиясын, шығармадан үзіндіні, суретін енгізу.</p></div>
+    <div class="glass"><h3 style="font-size:19px">Кеңістіктік талдау</h3><p>Бірнеше автордың шығармаларында жиі кездесетін ортақ жер аттарын анықтау.</p></div>
+  </div>
+</section>
+
+<!-- ANALYSIS -->
+<section id="analysis" class="reveal">
+  <div class="sh"><div><div class="num">07 · Талдау</div><h2>Этимология және картадағы бейне</h2><p class="sub">Топонимдер — «тірі» карта. Атаудың астарындағы мағына жалаң нүктені тарихи контекстке ие мәдени нысанға айналдырады.</p></div></div>
+  <div class="grid g2">
+    <div class="glass"><div class="cap">Диаграмма 1. Топоним түрлерінің шығармалар бойынша таралуы</div><svg class="chart" id="chart1"></svg><div class="legend" id="leg1"></div></div>
+    <div class="glass"><div class="cap">Диаграмма 2. Топонимдердің жалпы құрылымы</div><svg class="chart" id="chart2" viewBox="0 0 470 260"></svg></div>
+  </div>
+  <div class="ety" style="margin-top:20px">
+    <div class="e"><h4>Түстік топонимдер</h4><div class="ex">Ақсу · Қаратау · Сарыарқа</div><p>Нысанның түсіне немесе географиялық орнына (оңтүстік, солтүстік) ишара жасайды.</p></div>
+    <div class="e"><h4>Геометриялық</h4><div class="ex">Доңғал · Тікқия</div><p>Жер бедерінің формасын (дөңгелек, тік) көрсетеді.</p></div>
+    <div class="e"><h4>Флора мен фауна</h4><div class="ex">Қайыңды · Бұланды · Тарбағатай</div><p>Сол аймаққа тән өсімдіктер мен жануарлар дүниесін картада белгілейді.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="glass"><h3 style="font-size:20px">Оронимдер (тау аттары)</h3><p>Ұлытау (үлкен тау), Ақірек (ақ түсті қырқа). Картадағы биіктік деңгейлері (горизонтальдар) атаулардың дәлдігін растайды.</p></div>
+    <div class="glass"><h3 style="font-size:20px">Гидронимдер (су аттары)</h3><p>Есіл (ескі арна), Балқаш (сазды, батпақты жердегі су). Картадағы көк түсті нысандардың пішіні атаудың мағынасын аша түседі.</p></div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="reveal">
+  <div class="sh"><div><div class="num">08 · Қорытынды</div><h2>Үш шығармадағы топонимдік доминанта</h2></div></div>
+  <div class="cap">Кесте 1. Шығармалардың топонимдік сипаттамасы</div>
+  <div class="scroll"><table class="t"><thead><tr><th>Шығарма</th><th>Негізгі топонимдік доминанта</th><th>Көркемдік-философиялық қызметі</th></tr></thead><tbody id="ttab"></tbody></table></div>
+  <div class="parch" style="margin-top:24px">
+    <h3 style="font-size:24px;margin-bottom:10px">Көркем мәтінді цифрландыру және ГАЖ тиімділігі</h3>
+    <p style="margin:0 0 10px">Жоба барысында дәстүрлі әдебиеттану мен заманауи картография тоғыстырылып, көркем шығармалардағы топонимдердің электронды-сандық базасы жасалды. Google Earth және ArcGIS платформаларында әр шығарманың өзіндік сандық-маршруттық картасы дайындалды.</p>
+    <p style="margin:0">Бұл әдіс мәтіндегі статикалық географиялық атауларды динамикалық көрнекілікке айналдырды және оқушылардың көркем шығарманы кеңістік пен уақыт контексінде тұтас қабылдауына мүмкіндік берді.</p>
+  </div>
+  <h3 style="font-size:26px;margin:44px 0 18px">Бұл жоба маған не берді?</h3>
+  <div class="gain">
+    <div><b>Зерттеушілік позиция</b>Өзімді тыңдаушы емес, «жаңа білім жасаушы» ретінде сезіндім.</div>
+    <div><b>Шешендік</b>Жобаны қорғауда ойымды еркін, дәлелді жеткізуді үйрендім.</div>
+    <div><b>Функционалдық сауаттылық</b>Жер-су аттарының тарихи оқиғалардың куәгері екенін түсіндім.</div>
+    <div><b>Деректер визуализациясы</b>Карта жасау арқылы деректерді көрнекі көрсетуді меңгердім.</div>
+    <div><b>Отансүйгіштік</b>Туған жердің картасын әдебиет арқылы тану патриоттық сезімімді оятты.</div>
+    <div><b>Ұлттық мұра</b>Қазақ классикасын заманауи трендтерге бейімдеп, мұраны сақтауға үлес қостым.</div>
+  </div>
+  <h3 style="font-size:26px;margin:44px 0 18px">Ұсыныстар мен болашақ бағыттар</h3>
+  <div class="recs">
+    <div class="rec"><div class="n">01</div><h4>Интерактивті әдеби карта</h4><p>«Батыр Баян» бойынша маршруттық карта: нүктені басқанда жыр үзіндісі шығады.</p></div>
+    <div class="rec"><div class="n">02</div><h4>Инфографика</h4><p>Жер-су аттарының мағынасын ашатын визуалды инфографикалар дайындау.</p></div>
+    <div class="rec"><div class="n">03</div><h4>Білім беруге енгізу</h4><p>Сабақтарда «Цифрлық гуманитаристика» элементтерін қолдану, оқушыларға жыр картасын құрастырту.</p></div>
+    <div class="rec"><div class="n">04</div><h4>Туристік маршрут</h4><p>Көкшетау өңірінде «Батыр Баян ізімен» мәдени-танымдық маршрутын әзірлеу.</p></div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="reveal">
+  <div class="sh" style="justify-content:center;text-align:center"><div><div class="num" style="justify-content:center">09 · Ойын</div><h2>Топоним қай шығармада?</h2><p class="sub" style="margin:10px auto 0">Өзіңді тексер: 8 сұрақ, әр дұрыс жауапқа — бір жұлдыз.</p></div></div>
+  <div class="quiz"><div class="glass qcard" id="qcard"></div></div>
+</section>
+
+<!-- REFS -->
+<section id="refs" class="reveal" style="padding-bottom:20px">
+  <details class="refs"><summary>Пайдаланылған әдебиеттер</summary><ol>
+    <li>Жұмабаев М. Шығармалары: Өлеңдер, поэмалар, қара сөздер. – Алматы: Жазушы, 2013.</li>
+    <li>Әуезов М. О. Шығармаларының 50 томдық толық жинағы. Т. 3. – Алматы: Ғылым, 1998.</li>
+    <li>Шаханов М. Ғасырлар белесі: Поэмалар мен өлеңдер. – Алматы: Жалын, 2008.</li>
+    <li>Махамбет Өтемісұлы. Ереуіл атқа ер салмай. Өлеңдер жинағы. – Алматы: Жазушы, 2013.</li>
+    <li>Қойшыбаев Е. Қазақстанның жер-су аттары сөздігі. – Алматы: Мектеп, 1985.</li>
+    <li>Жанұзақов Т. Тарих толқынындағы топонимдер. – Алматы: Сөздік-Словарь, 2005.</li>
+    <li>Мадиев Ғ. Қазақ топонимикасы. Оқу құралы. – Алматы: Қазақ университеті, 2004.</li>
+    <li>Конкашпаев Г. К. Словарь казахских географических названий. – Алма-Ата: АН КазССР, 1963.</li>
+    <li>Қасқабасов С. Алтын күнбағыс. – Алматы: Ана тілі, 1992.</li>
+    <li>Drucker J. The Digital Humanities Coursebook. – Routledge, 2021.</li>
+    <li>«Қазақстанның жалпыұлттық қасиетті нысандары». – Астана: Фолиант, 2017.</li>
+  </ol></details>
+</section>
+</main>
+
+<footer>
+  <svg class="orn" viewBox="0 0 200 20" fill="none" stroke="#e3b65c" stroke-width="1.2"><path d="M0 10h80M120 10h80"/><path d="M100 2l8 8-8 8-8-8z"/><circle cx="86" cy="10" r="2"/><circle cx="114" cy="10" r="2"/></svg>
+  «Әдеби карта» · Ғылыми жоба · 2026<br><span style="font-size:12.5px;opacity:.7">Карта схемалық сипатта; шартты белгіленген нүктелердің орны шамамен көрсетілген.</span>
+</footer>
+
+<div class="lb" id="lb"><img alt=""><p></p></div>
+
+<script>
+// Ортақ деректер: сайт пен стенд үшін
+const WORKS = {
+  bb: { name: "«Батыр Баян»", author: "Мағжан Жұмабаев", genre: "поэма", color: "#e3b65c",
+        dominant: "Оронимдер (тау) мен гидронимдер (өзен)", func: "Ұлттық намыс пен шекара тұтастығының символы",
+        region: "Солтүстік және Орталық Қазақстан", era: "Жоңғар шапқыншылығы дәуірі (XVIII ғ.)" },
+  nq: { name: "«Нарынқұм зауалы»", author: "Мұхтар Шаханов", genre: "жыр", color: "#e0574b",
+        dominant: "Регионимдер (құм, дала) мен гидронимдер", func: "Еркіндік аңсаған халық рухы мен тарихи трагедия фоны",
+        region: "Батыс Қазақстан, Бөкей Ордасы", era: "1836–1838 жж. Исатай–Махамбет көтерілісі" },
+  ks: { name: "«Көксерек»", author: "Мұхтар Әуезов", genre: "әңгіме", color: "#4fc1b2",
+        dominant: "Оронимдер (адыр, қырат) мен микротопонимдер", func: "Жабайы табиғат пен адам арасындағы психологиялық арпалыс аумағы",
+        region: "Шығыс Қазақстан, Шыңғыстау", era: "ХХ ғасыр басындағы қазақ ауылы" }
+};
+
+const TYPES = {
+  oronim: "Ороним (тау, қырат)",
+  gidronim: "Гидроним (өзен, көл)",
+  regionim: "Регионим (өлке, құм)",
+  mikro: "Микротопоним",
+  oikonim: "Тарихи-әкімшілік атау"
+};
+
+// approx:true — нақты орны белгісіз, шартты белгіленген
+const PLACES = [
+  // ===== Батыр Баян =====
+  {id:"saryarqa", n:"Сарыарқа", w:"bb", t:"regionim", lon:70.2, lat:48.6,
+   et:"Сары — кең, ұлан-байтақ; Арқа — жон, қырат. «Кең-байтақ қыратты өлке».",
+   role:"Қазақ халқының кең-байтақ қонысы, батырлар туған қасиетті мекен. Поэмадағы оқиғаның жалпы фоны.", img:"m5", q:"«Асқар тау, ағынды су, бел-белесің… Сарыарқа!»"},
+  {id:"kokshe", n:"Көкшетау", w:"bb", t:"oronim", lon:69.4, lat:53.3,
+   et:"Көк (көкшіл, орманды) + тау. Алыстан көгілдір болып көрінетін тау.",
+   role:"Батыр Баян мен Абылай хан бастаған қазақ қолының бас қосатын, ту тігетін орталығы — еркіндік пен хан ордасының символы.", img:"m6"},
+  {id:"burabay", n:"Бурабай", w:"bb", t:"gidronim", lon:70.32, lat:53.05,
+   et:"Аңыз бойынша киелі ақ бураның атымен байланысты көл атауы.",
+   role:"Махаббат пен соңғы сырласу кеңістігі; «ішкі өрт пен үнсіздік» нүктесі.", img:"m10"},
+  {id:"oqzhetpes", n:"Оқжетпес", w:"bb", t:"oronim", lon:70.05, lat:53.22,
+   et:"«Оқ жетпейтін» биік жартас — биіктік пен қолжетімсіздікті білдіреді.",
+   role:"Ерлік пен ел қорғанысының символы ретінде жанама аталады.", img:"m9"},
+  {id:"esil", n:"Есіл", w:"bb", t:"gidronim", lon:71.4, lat:51.25,
+   et:"Зерттеуде «ескі арна» мағынасы ұсынылады.",
+   role:"Қазақ руларының жаз жайлауы, бейбіт тіршіліктің белгісі.", img:"m2"},
+  {id:"nura", n:"Нұра", w:"bb", t:"gidronim", lon:72.2, lat:50.1,
+   et:"Сарыарқаның ірі өзендерінің бірі; атауы жарқырап аққан суды меңзейді деген болжам бар.",
+   role:"Есілмен қатар аталатын құтты қоныс, бейбіт өмірдің белгісі.", img:"m2"},
+  {id:"tobyl", n:"Тобыл", w:"bb", t:"gidronim", la:"l", lon:63.6, lat:53.2,
+   et:"Солтүстіктегі ірі өзен атауы.",
+   role:"Шекаралық, стратегиялық маңызы бар, жаумен шайқас өткен аймақ.", img:"m5"},
+  {id:"obagan", n:"Обаған", w:"bb", t:"gidronim", lon:64.4, lat:53.75,
+   et:"Торғай өңіріндегі өзен; «оба» — төбе, қорған сөзімен байланыстырылады.",
+   role:"Баянның шыққан атамекені — Уақ елінің қонысы; «арпалыс» нүктесі.", img:"m6"},
+  {id:"qandyozek", n:"Жалдыөзек (Қандыөзек)", w:"bb", t:"regionim", lon:67.4, lat:49.2, approx:true,
+   et:"Асан Қайғы «Қандыөзек» деп атап кеткен, құт дарымаған, қағынған мекен.",
+   role:"Баянның Ноян мен қалмақ қызын атып өлтіретін жері — поэмадағы басты трагедияның (ағаның інісін өлтіруі) кеңістігі.", img:"m8"},
+  {id:"balqash", n:"Балқаш", w:"bb", t:"gidronim", lon:75.2, lat:46.6,
+   et:"Зерттеуде «сазды, батпақты жердегі су» мағынасы ұсынылады.",
+   role:"Майдан шебі; «намыс тектіресі» нүктесі.", img:"m12"},
+  {id:"ile", n:"Іле", w:"bb", t:"gidronim", lon:77.6, lat:44.0,
+   et:"Жетісудың басты өзені.",
+   role:"Іле шебі — «күнәдан арылу, шаһидтік» нүктесі; Баянның соңғы шайқасы.", img:"m11"},
+  {id:"altay", n:"Алтай", w:"bb", t:"oronim", lon:85.2, lat:49.2,
+   et:"Түркі-моңғол тілдерінде «алтынды тау» деген мағынамен түсіндіріледі.",
+   role:"Жаудың (жоңғарлардың) мекені, шапқыншылықтың төркіні; Ноян мен қалмақ қызының қашқан бағыты.", img:"m2"},
+  {id:"tarbagatay", n:"Тарбағатай", w:"bb", t:"oronim", lon:82.6, lat:47.3,
+   et:"«Тарбағаны көп тау» (тарбаған — суыр тектес аң).",
+   role:"Алтаймен бірге жау жағының, шығыстағы асқар таулардың символы.", img:"m2"},
+
+  // ===== Нарынқұм зауалы =====
+  {id:"naryn", n:"Нарынқұм", w:"nq", t:"regionim", lon:48.6, lat:47.55,
+   et:"Нарын — моңғ. «нарийн» (жіңішке, тар) сөзімен байланыстырылады; құм — шөл, құмды алап.",
+   role:"Бөкей ордасының негізгі жайлауы, көтерілістің орталығы. «Зауал» сөзімен тіркесіп, халық басына түскен трагедияның символына айналады.", img:"m15", q:"Нарынның суының ащы болуы — халық тағдырының ащылығымен үндеседі."},
+  {id:"orda", n:"Бөкей Ордасы", w:"nq", t:"oikonim", la:"l", lon:47.42, lat:48.77,
+   et:"Бөкей хан атымен аталған Ішкі Орда (1801–1845).",
+   role:"Көтерілістің тарихи-саяси кеңістігі, хан билігінің орталығы.", img:"m3"},
+  {id:"zhaiyq", n:"Жайық өзені", w:"nq", t:"gidronim", lon:51.75, lat:48.7,
+   et:"«Жайылып аққан» кең арналы өзен.",
+   role:"Көтерілісшілердің негізгі өткелі. Жайықтан өту — жаудан қашу емес, жаңа күреске бет алу; бақ пен сор қатар жүрген шекара.", img:"m15"},
+  {id:"tasotkel", n:"Тасөткел", w:"nq", t:"mikro", lon:51.25, lat:49.5, approx:true,
+   et:"Тас + өткел — тасты, таяз өткел.",
+   role:"Шайқас өткен стратегиялық өткел; көтерілісшілердің бағытын айқындайды, ерлік пен төзімділікті көрсетеді.", img:"m15"},
+  {id:"aqzhaiyq", n:"Ақжайық", w:"nq", t:"regionim", lon:51.2, lat:50.25,
+   et:"Ақ (қасиетті, мол) + Жайық.",
+   role:"Махамбеттің соңғы жылдарымен байланысты өңір; атамекен бейнесі.", img:"m15"},
+  {id:"qaraoy", n:"Қараой", w:"nq", t:"regionim", lon:50.55, lat:47.95, approx:true,
+   et:"Қара (үлкен; қаралы) + ой (ойпат, төмен жер).",
+   role:"Махамбеттің опасыздықпен өлтірілген жері. Топоним қаралы, мұңды реңкте беріледі — ердің соңғы мекені, халық мұңының нүктесі.", img:"m16"},
+  {id:"kaspiy", n:"Теңіз (Каспий)", w:"nq", t:"gidronim", lon:50.2, lat:45.9,
+   et:"Халық тілінде «Теңіз» деп аталған әлемдегі ең үлкен тұйық су айдыны.",
+   role:"Нарынқұм кеңістігінің оңтүстік шегі, жырдағы шексіздік бейнесі.", img:"m16"},
+
+  // ===== Көксерек =====
+  {id:"shyngys", n:"Шыңғыстау", w:"ks", t:"oronim", lon:78.95, lat:49.0,
+   et:"Шың + тау; халық аңызында Шыңғыс хан есімімен де байланыстырылады.",
+   role:"Мұхтар Әуезовтің туған өлкесі; әңгіменің жалпы географиялық кеңістігі.", img:"m7"},
+  {id:"qaraadyr", n:"Қараадыр", w:"ks", t:"oronim", la:"l", lon:78.7, lat:49.22, approx:true,
+   et:"Қара (өсімдігі қалың, алыстан қарауытқан) + адыр (аласа, созылған қырат).",
+   role:"Көксеректің туған жері, қасқырлардың ежелгі мекені. Оқиға осы жерден басталып, осында аяқталады.", img:"m4"},
+  {id:"ashykol", n:"Ащыкөл", w:"ks", t:"gidronim", lon:79.25, lat:49.2, approx:true,
+   et:"Ащы (тұзды) + көл. Жағасы қамысты, батпақты көл.",
+   role:"Көксеректің баспанасы: батпаққа атты адам кіре алмайтындықтан, қасқыр судың ортасында аман қалады.", img:"m4"},
+  {id:"saryzhota", n:"Сарыжота", w:"ks", t:"oronim", lon:79.1, lat:48.8, approx:true,
+   et:"Сары (күзде қураған шөп) + жота (созылған қырат).",
+   role:"Бостандық нүктесі: Көксерек алғаш осы жотадан асып, түз қасқырларына ілеседі; айға қарап ұлитын жері.", img:"m1"}
+];
+
+// Шығармадағы сюжет маршруттары
+const ROUTES = {
+  bb: ["obagan","burabay","qandyozek","balqash","ile"],
+  nq: ["orda","naryn","tasotkel","aqzhaiyq","qaraoy"],
+  ks: ["qaraadyr","saryzhota","ashykol","qaraadyr"]
+};
+
+// Қазақстанның схемалық шекарасы (lon, lat)
+const KZ = [[49.2,46.3],[48.6,46.9],[48.0,47.7],[46.7,48.3],[46.5,48.6],[47.2,49.2],[46.9,49.9],[48.2,50.6],[48.7,50.6],[48.6,51.1],[50.0,51.6],[52.3,51.7],[54.5,50.9],[55.7,50.6],[57.0,51.1],[58.5,51.0],[59.6,50.6],[61.4,50.8],[61.6,51.3],[60.0,51.9],[61.0,52.3],[61.0,53.0],[62.0,53.2],[61.2,53.6],[61.5,54.0],[63.0,54.6],[65.3,54.6],[68.2,55.4],[70.8,55.3],[71.2,54.2],[73.4,53.9],[74.4,53.6],[76.3,54.2],[76.9,52.8],[78.0,52.9],[80.0,51.3],[81.5,50.8],[83.0,51.0],[84.0,50.9],[85.0,50.0],[86.5,49.6],[87.3,49.1],[86.8,48.5],[85.7,48.0],[85.5,47.1],[83.0,47.2],[82.3,45.5],[79.9,44.9],[80.5,44.2],[80.2,42.9],[79.0,42.8],[76.0,42.9],[75.5,42.9],[74.0,43.3],[73.5,42.5],[71.0,42.8],[70.0,41.5],[68.5,40.6],[68.0,41.0],[66.6,41.2],[66.0,42.9],[64.9,43.7],[61.0,44.4],[58.6,45.6],[56.0,45.0],[56.0,41.3],[55.4,41.3],[53.0,42.1],[52.7,42.6],[51.2,43.65],[50.3,44.5],[51.0,45.1],[52.8,45.6],[53.2,46.7],[51.9,47.1],[50.0,46.6],[49.2,46.3]];
+const WATER = {
+  caspian: [[49.2,46.3],[50.0,46.6],[51.9,47.1],[53.2,46.7],[52.8,45.6],[51.0,45.1],[50.3,44.5],[51.2,43.65],[52.7,42.6],[53.0,42.1],[52.9,40.6],[49.2,40.6],[48.2,42.4],[47.6,44.3],[46.9,45.4],[47.6,46.0],[48.5,46.0]],
+  aral: [[59.5,46.0],[60.4,46.5],[61.1,46.6],[61.6,45.7],[60.9,45.0],[60.0,44.9],[59.2,45.3]],
+  balqash: [[73.6,46.6],[74.6,46.25],[76.0,46.6],[77.5,45.95],[79.1,46.35],[78.9,46.7],[77.3,46.45],[76.0,47.0],[74.5,46.75]],
+  zaisan: [[83.6,48.0],[84.6,47.9],[84.9,48.15],[84.0,48.25]]
+};
+const RIVERS = [
+  [[51.4,51.25],[51.5,50.5],[51.2,49.8],[51.75,48.8],[51.85,47.9],[51.9,47.1]],
+  [[86.6,48.0],[84.9,48.15],[83.6,48.0],[82.6,49.95],[80.2,50.4],[77.5,51.6],[76.9,52.3],[75.0,53.5],[74.4,53.8]],
+  [[73.6,51.0],[71.4,51.25],[69.3,51.5],[67.0,51.7],[66.5,52.8],[68.5,54.2],[69.1,54.9]],
+  [[68.4,40.8],[68.2,42.6],[66.9,44.0],[65.5,44.85],[62.8,45.9],[61.1,46.1]],
+  [[80.3,44.0],[78.0,43.85],[77.0,44.4],[75.5,45.2],[74.6,46.1]],
+  [[61.4,52.0],[63.6,53.2],[64.6,54.4],[65.3,54.6]],
+  [[73.2,49.9],[72.2,50.1],[70.8,50.3],[69.6,50.4]],
+  [[64.0,51.4],[64.4,53.75],[64.8,54.4]]
+];
+
+// Проекция: тең бұрышты, ендікке түзетілген
+const PROJ = { lon0:44, lat1:56.5, kx:20*Math.cos(48*Math.PI/180), ky:20 };
+function proj(lon,lat){ return [ (lon-PROJ.lon0)*PROJ.kx, (PROJ.lat1-lat)*PROJ.ky ]; }
+const MAP_W = (89-44)*PROJ.kx, MAP_H = (56.5-39.8)*PROJ.ky;
+
+// Топографиялық изосызықтар (marching squares) — фон үшін
+function contourPaths(w,h,opts){
+  opts=opts||{}; const cell=opts.cell||14, levels=opts.levels||12, seed=opts.seed||7, t=opts.t||0, sc=opts.scale||0.0042;
+  function hash(x,y){ let s=Math.sin(x*127.1+y*311.7+seed*74.7)*43758.5453; return s-Math.floor(s); }
+  function noise(x,y){ const xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi;
+    const u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf);
+    const a=hash(xi,yi), b=hash(xi+1,yi), c=hash(xi,yi+1), d=hash(xi+1,yi+1);
+    return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v; }
+  function f(x,y){ let s=0,amp=1,fr=1,tot=0; for(let o=0;o<4;o++){ s+=amp*noise(x*sc*fr+t*0.13*fr, y*sc*fr-t*0.09); tot+=amp; amp*=0.5; fr*=2.03;} return s/tot; }
+  const nx=Math.ceil(w/cell)+1, ny=Math.ceil(h/cell)+1, g=new Float32Array(nx*ny);
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++) g[j*nx+i]=f(i*cell,j*cell);
+  const out=[];
+  for(let L=1;L<levels;L++){
+    const lv=0.25+0.5*L/levels; let d="";
+    for(let j=0;j<ny-1;j++) for(let i=0;i<nx-1;i++){
+      const a=g[j*nx+i], b=g[j*nx+i+1], c=g[(j+1)*nx+i+1], e=g[(j+1)*nx+i];
+      const idx=(a>lv?8:0)|(b>lv?4:0)|(c>lv?2:0)|(e>lv?1:0); if(idx===0||idx===15) continue;
+      const x=i*cell, y=j*cell;
+      const T=[x+cell*(lv-a)/(b-a), y], R=[x+cell, y+cell*(lv-b)/(c-b)], B=[x+cell*(lv-e)/(c-e), y+cell], Lf=[x, y+cell*(lv-a)/(e-a)];
+      const segs={1:[[Lf,B]],2:[[B,R]],3:[[Lf,R]],4:[[T,R]],5:[[Lf,T],[B,R]],6:[[T,B]],7:[[Lf,T]],8:[[Lf,T]],9:[[T,B]],10:[[T,R],[Lf,B]],11:[[T,R]],12:[[Lf,R]],13:[[B,R]],14:[[Lf,B]]}[idx];
+      for(const s of segs) d+=`M${s[0][0].toFixed(1)} ${s[0][1].toFixed(1)}L${s[1][0].toFixed(1)} ${s[1][1].toFixed(1)}`;
+    }
+    out.push({level:L,d});
+  }
+  return out;
+}
+
+// Карта SVG-ін құру (сайт пен стендке ортақ)
+function buildMapSVG(o){
+  o=o||{}; const lbl=o.labels!==false, k=o.k||1;
+  const pts=a=>a.map(p=>proj(p[0],p[1]).map(v=>v.toFixed(1)).join(",")).join(" ");
+  let s=`<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(79,193,178,.25)" stroke-width="1.2"/></pattern>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${3*k}" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+  // градус торы
+  for(let lon=45;lon<=88;lon+=5){ const a=proj(lon,56.5), b=proj(lon,39.8); s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" class="grat"/>`; }
+  for(let lat=40;lat<=56;lat+=4){ const a=proj(44,lat), b=proj(89,lat); s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" class="grat"/><text x="${a[0]+4}" y="${a[1]-3}" class="gratl">${lat}°</text>`; }
+  s+=`<polygon points="${pts(KZ)}" class="land"/>`;
+  for(const k2 in WATER) s+=`<polygon points="${pts(WATER[k2])}" class="water"/>`;
+  for(const r of RIVERS) s+=`<polyline points="${pts(r)}" class="river"/>`;
+  // маршруттар
+  for(const w in ROUTES){
+    const p=ROUTES[w].map(id=>{const q=PLACES.find(x=>x.id===id);return proj(q.lon,q.lat);});
+    let d=`M${p[0][0]} ${p[0][1]}`;
+    for(let i=1;i<p.length;i++){ const a=p[i-1], b=p[i], mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, dx=b[0]-a[0], dy=b[1]-a[1]; const cx=mx-dy*0.18, cy=my+dx*0.18; d+=`Q${cx.toFixed(1)} ${cy.toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}`; }
+    s+=`<path d="${d}" class="route r-${w}" stroke="${WORKS[w].color}" data-w="${w}"/>`;
+  }
+  for(const p of PLACES){
+    const [x,y]=proj(p.lon,p.lat), c=WORKS[p.w].color;
+    s+=`<g class="pt" data-id="${p.id}" data-w="${p.w}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+      <circle class="halo" r="${11*k}" fill="${c}" opacity=".18"/>
+      <circle class="dot" r="${5.5*k}" fill="${c}" stroke="#0d1026" stroke-width="${1.6*k}" ${p.approx?`stroke-dasharray="${2*k} ${1.5*k}"`:""}/>
+      ${lbl?`<text class="lbl" x="${(p.la?-9:9)*k}" y="${4*k}" font-size="${12*k}" text-anchor="${p.la?"end":"start"}">${p.n.replace(/ \(.*\)/,"")}</text>`:""}
+    </g>`;
+  }
+  return s;
+}
+if(typeof module!=="undefined") module.exports={WORKS,TYPES,PLACES,ROUTES};
+
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const CAPS={m1:"Көксерек: екі дүниенің ортасы",m2:"«Батыр Баян» поэмасының географиялық кеңістігі",m3:"«Нарынқұм зауалы»: семантикалық тор",m4:"Көксерек — жердің жады",m5:"«Батыр Баян» — тарихи-географиялық карта",m6:"Тұғыр орда — трагедия сахнасы",m7:"Көксеректің жолы",m8:"Қандыөзек — Асан Қайғы атап кеткен жер",m9:"«Батыр Баян» поэмасындағы ұлттық код",m10:"Батыр Баян: көркемдік-географиялық маршрут",m11:"Алты нүкте — алты психологиялық күй",m12:"Батыр Баян майдан шебінің картасы",m13:"Алты алаштың намысы — абсолютті құндылық",m14:"Құндылықтар картасы",m15:"«Нарынқұм зауалы»: оқиғалардың географиялық картасы",m16:"Топонимдердің көркемдік қызметі"};
+const GAL={bb:["m5","m2","m10","m6","m11","m12","m9","m8","m13","m14"],nq:["m15","m3","m16"],ks:["m4","m1","m7"]};
+
+/* ---- фон: қозғалмалы изосызықтар ---- */
+const cv=$("#cv"), cx=cv.getContext("2d"); let T=0, lastDraw=0;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function drawBG(ts){
+  if(ts-lastDraw>90||!lastDraw){ lastDraw=ts;
+    const dpr=Math.min(devicePixelRatio||1,1.5), w=innerWidth, h=innerHeight;
+    if(cv.width!==w*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+    cx.setTransform(dpr,0,0,dpr,0,0); cx.clearRect(0,0,w,h);
+    const ps=contourPaths(w,h,{cell:18,levels:14,t:T,seed:3,scale:0.0036});
+    ps.forEach(p=>{ cx.strokeStyle=p.level%4===0?"rgba(227,182,92,.20)":"rgba(227,182,92,.075)"; cx.lineWidth=p.level%4===0?1.1:.8; cx.stroke(new Path2D(p.d)); });
+    T+=0.05;
+  }
+  if(!reduce) requestAnimationFrame(drawBG);
+}
+requestAnimationFrame(drawBG); addEventListener("resize",()=>{lastDraw=0;if(reduce)requestAnimationFrame(drawBG)});
+
+/* ---- санауыш ---- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.08});
+$$(".reveal").forEach(el=>io.observe(el));
+$$("[data-count]").forEach(el=>{ const n=+el.dataset.count; let i=0; const step=()=>{ i++; el.textContent=Math.round(n*Math.min(1,i/40)); if(i<40) requestAnimationFrame(step); }; setTimeout(step,400); });
+
+/* ---- тілдер ---- */
+$$("#langtabs button").forEach(b=>b.onclick=()=>{ $$("#langtabs button").forEach(x=>x.classList.toggle("on",x===b)); $$(".lang").forEach(x=>x.classList.toggle("on",x.dataset.l===b.dataset.l)); });
+
+/* ---- белсенді мәзір ---- */
+const secs=$$("main section[id]"), links=$$("#links a");
+addEventListener("scroll",()=>{ let cur=""; secs.forEach(s=>{ if(s.getBoundingClientRect().top<140) cur=s.id; }); links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+cur)); },{passive:true});
+
+/* ---- КАРТА ---- */
+const svg=$("#lmap"); svg.innerHTML=buildMapSVG({k:1});
+["burabay","oqzhetpes","tasotkel","aqzhaiyq","qaraadyr","ashykol","saryzhota","orda","nura"].forEach(id=>svg.querySelector(`.pt[data-id="${id}"] .lbl`).classList.add("minor"));
+const FULL=[proj(45.5,56)[0],proj(45.5,56)[1],proj(88,40.3)[0]-proj(45.5,56)[0],proj(88,40.3)[1]-proj(45.5,56)[1]];
+let vb=FULL.slice(), anim=null;
+function setVB(v){ vb=v; svg.setAttribute("viewBox",v.map(x=>x.toFixed(2)).join(" ")); const k=v[2]/FULL[2];
+  svg.querySelectorAll(".pt").forEach(g=>{ g.querySelector(".dot").setAttribute("r",5.5*Math.max(k,.12)); g.querySelector(".halo").setAttribute("r",11*Math.max(k,.12)); g.querySelector(".dot").setAttribute("stroke-width",1.6*Math.max(k,.12)); const t=g.querySelector(".lbl"); t.setAttribute("font-size",12*Math.max(k,.12)); t.setAttribute("x",(t.getAttribute("text-anchor")==="end"?-9:9)*Math.max(k,.12)); t.setAttribute("y",4*Math.max(k,.12)); t.style.strokeWidth=3*Math.max(k,.12)+"px"; });
+  svg.querySelectorAll(".route").forEach(r=>{ r.style.strokeWidth=2.2*Math.max(k,.12); r.style.strokeDasharray=`${7*Math.max(k,.12)} ${6*Math.max(k,.12)}`; });
+  svg.classList.toggle("far",k>0.55);
+  svg.querySelectorAll(".grat").forEach(l=>l.style.strokeWidth=Math.max(k,.1)); svg.querySelectorAll(".gratl").forEach(l=>l.setAttribute("font-size",10*Math.max(k,.12)));
+  svg.querySelectorAll(".river,.land,.water").forEach(r=>r.style.strokeWidth=(r.classList.contains("land")?1.4:1.2)*Math.max(k,.15));
+}
+function fitAspect(v){ const r=svg.clientWidth/Math.max(1,svg.clientHeight); let [x,y,w,h]=v; if(w/h<r){ const nw=h*r; x-=(nw-w)/2; w=nw; } else { const nh=w/r; y-=(nh-h)/2; h=nh; } return [x,y,w,h]; }
+function animTo(t){ t=fitAspect(t); const s=vb.slice(), t0=performance.now(); cancelAnimationFrame(anim);
+  const f=now=>{ let p=Math.min(1,(now-t0)/900); p=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; setVB(s.map((v,i)=>v+(t[i]-v)*p)); if(p<1) anim=requestAnimationFrame(f); }; anim=requestAnimationFrame(f); }
+function bboxOf(w){ const ps=PLACES.filter(p=>w==="all"||p.w===w).map(p=>proj(p.lon,p.lat)); let x0=Math.min(...ps.map(p=>p[0])), x1=Math.max(...ps.map(p=>p[0])), y0=Math.min(...ps.map(p=>p[1])), y1=Math.max(...ps.map(p=>p[1])); const pad=Math.max(x1-x0,y1-y0)*0.3+10; return [x0-pad,y0-pad*1.3,x1-x0+pad*2.4,y1-y0+pad*2.3]; }
+function sizeMap(){ const mw=svg.parentNode, h=Math.max(380,Math.min(640,mw.clientWidth*0.66)); mw.style.height=h+"px"; const inf=$("#info"); if(innerWidth>980){inf.style.height=h+"px";inf.style.minHeight="0";}else{inf.style.height="auto";inf.style.minHeight="380px";} setVB(fitAspect(curW==="all"?FULL:bboxOf(curW))); }
+let curW="all";
+function filt(w){ curW=w; $$("#filters .fbtn").forEach(b=>b.classList.toggle("on",b.dataset.w===w));
+  svg.querySelectorAll(".pt,.route").forEach(g=>g.classList.toggle("dim",w!=="all"&&g.dataset.w!==w));
+  animTo(w==="all"?FULL:bboxOf(w)); }
+$$("#filters .fbtn").forEach(b=>b.onclick=()=>filt(b.dataset.w));
+function showPlace(id,zoom){ const p=PLACES.find(x=>x.id===id), W=WORKS[p.w];
+  svg.querySelectorAll(".pt").forEach(g=>g.classList.toggle("sel",g.dataset.id===id));
+  $("#info").innerHTML=`<div class="ph" style="background-image:url(img/${p.img}.jpg)"><span class="wt" style="background:${W.color};color:#1a1430">${W.name} · ${W.author}</span></div>
+   <div class="bd"><h3>${p.n}</h3><span class="badge">${TYPES[p.t]}</span><span class="badge">${p.lat.toFixed(2)}° с.е., ${p.lon.toFixed(2)}° ш.б.</span>
+   <h5>Этимологиясы</h5><p>${p.et}</p><h5>Шығармадағы рөлі</h5><p>${p.role}</p>${p.q?`<div class="qt">${p.q}</div>`:""}
+   ${p.approx?`<div class="ap">◌ Нақты орны белгісіз — шығарма мәтіні бойынша шартты белгіленген.</div>`:""}</div>`;
+  $("#info .ph").onclick=()=>openLB(p.img);
+  if(zoom){ const [x,y]=proj(p.lon,p.lat); const w=FULL[2]*(p.w==="ks"?0.06:0.22); animTo([x-w/2,y-w*0.35,w,w*0.7]); }
+}
+svg.addEventListener("click",e=>{ const g=e.target.closest(".pt"); if(g&&!dragged) showPlace(g.dataset.id,false); });
+// сүйреу және масштаб
+let drag=null, dragged=false;
+svg.addEventListener("pointerdown",e=>{ drag={x:e.clientX,y:e.clientY,vb:vb.slice()}; dragged=false; svg.setPointerCapture(e.pointerId); svg.style.cursor="grabbing"; });
+svg.addEventListener("pointermove",e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(Math.abs(dx)+Math.abs(dy)>4) dragged=true; const s=vb[2]/svg.clientWidth; setVB([drag.vb[0]-dx*s,drag.vb[1]-dy*s,vb[2],vb[3]]); });
+svg.addEventListener("pointerup",()=>{ drag=null; svg.style.cursor="grab"; setTimeout(()=>dragged=false,0); });
+function zoomBy(f,cxp,cyp){ const r=svg.getBoundingClientRect(); cxp=cxp??r.width/2; cyp=cyp??r.height/2; const mx=vb[0]+vb[2]*cxp/r.width, my=vb[1]+vb[3]*cyp/r.height; const w=Math.min(FULL[2]*1.3,Math.max(FULL[2]*0.03,vb[2]*f)), h=w*vb[3]/vb[2]; setVB([mx-(mx-vb[0])*w/vb[2], my-(my-vb[1])*h/vb[3], w, h]); }
+svg.addEventListener("wheel",e=>{ e.preventDefault(); const r=svg.getBoundingClientRect(); zoomBy(e.deltaY>0?1.15:0.87,e.clientX-r.left,e.clientY-r.top); },{passive:false});
+$("#zin").onclick=()=>zoomBy(0.7); $("#zout").onclick=()=>zoomBy(1.4); $("#zre").onclick=()=>filt("all");
+addEventListener("resize",sizeMap); requestAnimationFrame(sizeMap);
+
+/* ---- ШЫҒАРМАЛАР ---- */
+const wt=$("#wtabs"), wp=$("#wpanels");
+Object.entries(WORKS).forEach(([k,W],i)=>{
+  wt.insertAdjacentHTML("beforeend",`<button class="wt ${i?"":"on"}" style="--c:${W.color}" data-k="${k}"><small>${W.author} · ${W.genre}</small><b>${W.name}</b></button>`);
+  const pl=PLACES.filter(p=>p.w===k);
+  wp.insertAdjacentHTML("beforeend",`<div class="wpanel ${i?"":"on"}" data-k="${k}" style="--c:${W.color}">
+    <div><div class="wmeta"><div><span>Өңір</span>${W.region}</div><div><span>Дәуір</span>${W.era}</div><div><span>Доминанта</span>${W.dominant}</div><div><span>Көркемдік қызметі</span>${W.func}</div></div>
+      <div class="tlist">${pl.map(p=>`<div class="titem" data-id="${p.id}"><div class="tn">${p.n.replace(/ \(.*\)/,"")}</div><p>${p.role}</p></div>`).join("")}</div></div>
+    <div class="gal">${GAL[k].map((m,j)=>`<figure class="${j===0?"big":""}" data-m="${m}"><img src="img/${m}.jpg" loading="lazy" alt="${CAPS[m]}"><figcaption>${CAPS[m]}</figcaption></figure>`).join("")}</div></div>`);
+});
+$$(".wt").forEach(b=>b.onclick=()=>{ $$(".wt").forEach(x=>x.classList.toggle("on",x===b)); $$(".wpanel").forEach(x=>x.classList.toggle("on",x.dataset.k===b.dataset.k)); });
+$$(".titem").forEach(t=>t.onclick=()=>{ const p=PLACES.find(x=>x.id===t.dataset.id); filt(p.w); location.hash="map"; setTimeout(()=>showPlace(p.id,true),950); });
+function openLB(m){ const lb=$("#lb"); lb.querySelector("img").src=`img/${m}.jpg`; lb.querySelector("p").textContent=CAPS[m]; lb.classList.add("on"); }
+$$(".gal figure").forEach(f=>f.onclick=()=>openLB(f.dataset.m)); $("#lb").onclick=()=>$("#lb").classList.remove("on");
+
+/* ---- ДИАГРАММАЛАР ---- */
+const TC={oronim:"#c98a3a",gidronim:"#4fa3d9",regionim:"#e0574b",mikro:"#4fc1b2",oikonim:"#9a7fe0"};
+(function(){ const c=$("#chart1"), W=520, H=230, ks=Object.keys(WORKS), max=Math.max(...ks.map(k=>PLACES.filter(p=>p.w===k).length));
+  c.setAttribute("viewBox",`0 0 ${W} ${H}`); let s=""; const x0=178, bw=W-x0-40;
+  for(let g=0;g<=max;g+=2){ const x=x0+bw*g/max; s+=`<line x1="${x}" y1="10" x2="${x}" y2="${H-30}" stroke="rgba(255,255,255,.08)"/><text x="${x}" y="${H-12}" fill="#a9a6c4" font-size="11" text-anchor="middle">${g}</text>`; }
+  ks.forEach((k,i)=>{ const y=22+i*62; let x=x0; s+=`<text x="${x0-12}" y="${y+24}" fill="#fff" font-family="Lora" font-size="15" font-weight="600" text-anchor="end">${WORKS[k].name}</text>`;
+    Object.keys(TYPES).forEach(t=>{ const n=PLACES.filter(p=>p.w===k&&p.t===t).length; if(!n) return; const w=bw*n/max; s+=`<rect x="${x}" y="${y}" width="${w-2}" height="38" rx="6" fill="${TC[t]}"><animate attributeName="width" from="0" to="${w-2}" dur="1s" fill="freeze"/></rect><text x="${x+w/2}" y="${y+24}" fill="#0b0e22" font-size="13" font-weight="700" text-anchor="middle">${n}</text>`; x+=w; });
+    s+=`<text x="${x+8}" y="${y+24}" fill="${WORKS[k].color}" font-size="14" font-weight="700">${PLACES.filter(p=>p.w===k).length}</text>`; });
+  c.innerHTML=s; $("#leg1").innerHTML=Object.keys(TYPES).map(t=>`<span><i style="background:${TC[t]}"></i>${TYPES[t]}</span>`).join("");
+  // donut
+  const d=$("#chart2"), tot=PLACES.length; let a=-Math.PI/2, ds=""; const R=95, r=58, cxx=120, cyy=130;
+  Object.keys(TYPES).forEach(t=>{ const n=PLACES.filter(p=>p.t===t).length; if(!n) return; const a2=a+2*Math.PI*n/tot, lg=a2-a>Math.PI?1:0;
+    const P=(ang,rr)=>[cxx+rr*Math.cos(ang),cyy+rr*Math.sin(ang)]; const [x1,y1]=P(a,R),[x2,y2]=P(a2,R),[x3,y3]=P(a2,r),[x4,y4]=P(a,r);
+    ds+=`<path d="M${x1} ${y1}A${R} ${R} 0 ${lg} 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 ${lg} 0 ${x4} ${y4}Z" fill="${TC[t]}" stroke="#12163a" stroke-width="2"/>`; a=a2; });
+  ds+=`<text x="${cxx}" y="${cyy-2}" fill="#fff" font-family="Lora" font-size="34" font-weight="700" text-anchor="middle">${tot}</text><text x="${cxx}" y="${cyy+20}" fill="#a9a6c4" font-size="12" text-anchor="middle">топоним</text>`;
+  let ly=50; Object.keys(TYPES).forEach(t=>{ const n=PLACES.filter(p=>p.t===t).length; if(!n) return; ds+=`<rect x="250" y="${ly-11}" width="13" height="13" rx="3" fill="${TC[t]}"/><text x="270" y="${ly}" fill="#e9e6f5" font-size="13">${TYPES[t].split(" (")[0]} — <tspan font-weight="700">${Math.round(n/tot*100)}%</tspan></text>`; ly+=30; });
+  d.innerHTML=ds;
+})();
+$("#ttab").innerHTML=Object.values(WORKS).map(W=>`<tr><td style="font-family:Lora;font-weight:700;color:${W.color};font-size:17px">${W.name}</td><td>${W.dominant}</td><td>${W.func}</td></tr>`).join("");
+
+/* ---- КВИЗ ---- */
+let Q=[], qi=0, score=0;
+function newQuiz(){ Q=PLACES.slice().sort(()=>Math.random()-.5).slice(0,8); qi=0; score=0; renderQ(); }
+function renderQ(){ const c=$("#qcard");
+  if(qi>=Q.length){ c.innerHTML=`<div class="qprog"><i style="width:100%"></i></div><div style="font-size:46px;letter-spacing:6px;color:var(--gold)">${"★".repeat(score)}<span style="opacity:.2">${"★".repeat(8-score)}</span></div><div class="qq">${score} / 8</div><p style="color:var(--mut)">${score>=7?"Керемет! Сен — нағыз әдеби картограф.":score>=4?"Жақсы нәтиже! Картаны тағы бір шолып шық.":"Картадағы нүктелерді басып, қайта байқап көр."}</p><button class="btn pri" id="qr" style="margin-top:12px">Қайта ойнау</button>`; $("#qr").onclick=newQuiz; return; }
+  const p=Q[qi]; c.innerHTML=`<div class="qprog"><i style="width:${qi/Q.length*100}%"></i></div><div style="color:var(--mut);font-size:14px">Сұрақ ${qi+1} / ${Q.length}</div><div class="qq">«${p.n.replace(/ \(.*\)/,"")}» қай шығармада кездеседі?</div>
+   <div class="qopts">${Object.entries(WORKS).map(([k,W])=>`<button class="qo" data-k="${k}">${W.name}</button>`).join("")}</div><div class="qfb"></div>`;
+  $$(".qo").forEach(b=>b.onclick=()=>{ if(c.dataset.lock) return; c.dataset.lock=1; const ok=b.dataset.k===p.w; if(ok) score++;
+    $$(".qo").forEach(x=>{ if(x.dataset.k===p.w) x.classList.add("ok"); else if(x===b) x.classList.add("no"); });
+    c.querySelector(".qfb").innerHTML=(ok?"✓ Дұрыс! ":"✗ Қате. ")+p.role;
+    setTimeout(()=>{ delete c.dataset.lock; qi++; renderQ(); },2300); });
+}
+newQuiz();
+})();
+</script>
+</body>
+</html>
